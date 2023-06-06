@@ -1,29 +1,25 @@
 package Programacion.EntidadFinanciera.data.local;
-/*
-import Programacion.EntidadFinanciera.domain.models.BankAccount;
 
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Type;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
+ 
+
+import Programacion.EntidadFinanciera.domain.models.BankAccount;
+
+ 
+
 public class BankAccountFileDataSource {
+    private String nameFile = "BankAccount.txt";
 
-	private String nameFile = "BankAccount.txt";
-
-    private Gson gson = new Gson();
+ 
 
     private static BankAccountFileDataSource instance = null;
 
-
-    private final Type typeList = new TypeToken<ArrayList<BankAccount>>() {
-    }.getType();
+ 
 
     public void save(BankAccount model) {
         List<BankAccount> models = findAll();
@@ -31,15 +27,24 @@ public class BankAccountFileDataSource {
         saveToFile(models);
     }
 
+ 
+
     public void saveList(List<BankAccount> models) {
         saveToFile(models);
     }
 
+ 
+
     private void saveToFile(List<BankAccount> models) {
         try {
-            FileWriter myWriter = new FileWriter(nameFile);
-            myWriter.write(gson.toJson(models));
-            myWriter.close();
+            FileWriter writer = new FileWriter(nameFile);
+            for (BankAccount model : models) {
+                String line = model.getId() + "," + model.getAccNumber() + ","
+                        + model.getOwner().getId() + "," + model.getTransaction().getId() + ","
+                        + model.getProduct().getId() + "," + model.getBalance() + "\n";
+                writer.write(line);
+            }
+            writer.close();
             System.out.println("Datos guardados correctamente");
         } catch (IOException e) {
             System.out.println("Ha ocurrido un error al guardar la información.");
@@ -47,8 +52,9 @@ public class BankAccountFileDataSource {
         }
     }
 
+ 
 
-    public BankAccount findById(Integer id) {
+    public BankAccount findById(String id) {
         List<BankAccount> models = findAll();
         for (BankAccount model : models) {
             if (Objects.equals(model.getId(), id)) {
@@ -58,19 +64,43 @@ public class BankAccountFileDataSource {
         return null;
     }
 
+ 
+
     public List<BankAccount> findAll() {
+        List<BankAccount> models = new ArrayList<>();
         try {
-            File myObj = new File(nameFile);
-            if (!myObj.exists()) {
-                myObj.createNewFile();
+            File file = new File(nameFile);
+            if (!file.exists()) {
+                file.createNewFile();
             }
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-                myReader.close();
-                return gson.fromJson(data, typeList);
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] data = line.split(",");
+                if (data.length == 6) {
+                    String id = data[0];
+                    String accNumber = data[1];
+                    String ownerId = data[2];
+                    String transactionId = data[3];
+                    String productId = data[4];
+                    Integer balance = Integer.parseInt(data[5]);
+
+                    Customer owner = new Customer(ownerId);
+                    Movement transaction = new Movement(transactionId);
+                    Product product = new Product(productId);
+
+                    BankAccount model = new BankAccount();
+                    model.setId(id);
+                    model.setAccNumber(accNumber);
+                    model.setOwner(owner);
+                    model.setTransaction(transaction);
+                    model.setProduct(product);
+                    model.setBalance(balance);
+
+                    models.add(model);
+                }
             }
-            myReader.close();
+            scanner.close();
         } catch (FileNotFoundException e) {
             System.out.println("Ha ocurrido un error al obtener el listado.");
             e.printStackTrace();
@@ -78,23 +108,28 @@ public class BankAccountFileDataSource {
             System.out.println("Ha ocurrido un error al crear el fichero.");
             throw new RuntimeException(e);
         }
-        return new ArrayList<>();
+        return models;
     }
+
+ 
 
     public void delete(String modelId) {
         List<BankAccount> newList = new ArrayList<>();
         List<BankAccount> models = findAll();
         for (BankAccount model : models) {
-            if (model.getId() != modelId) {
+            if (!Objects.equals(model.getId(), modelId)) {
                 newList.add(model);
             }
         }
         saveList(newList);
     }
-    public static BankAccountFileDataSource getInstance(){
-        if (instance==null){
+
+ 
+
+    public static BankAccountFileDataSource getInstance() {
+        if (instance == null) {
             instance = new BankAccountFileDataSource();
         }
         return instance;
     }
-}*/
+}
