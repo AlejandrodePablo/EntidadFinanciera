@@ -1,50 +1,33 @@
 package Programacion.EntidadFinanciera.domain.models;
 
 public class Movements {
-	private int NºCuenta;
-	private Customer customer;
-	private Movements movements;
-	private String ProductoContratado;
-	private int saldo;
-	
-	public Integer getNºCuenta() {
-		return NºCuenta;
-	}
-	
-	public void setNºCuenta(Integer nºCuenta) {
-        NºCuenta = nºCuenta;
+    private Integer id;
+    private String descripcion;
+    private Integer importe;
+
+    public Integer getId() {
+        return id;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public Movements getMovements() {
-        return movements;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    public void setMovements(Movements movements) {
-        this.movements = movements;
+    public Integer getImporte() {
+        return importe;
     }
 
-    public String getProductoContratado() {
-        return ProductoContratado;
-    }
-
-    public void setProductoContrtado(String productoContrtado) {
-        ProductoContratado = productoContrtado;
-    }
-
-    public Integer getSaldo() {
-        return saldo;
-    }
-
-    public void setSaldo(Integer saldo) {
-        this.saldo = saldo;
+    public void setImporte(Integer importe) {
+        this.importe = importe;
     }
 }
+
 
